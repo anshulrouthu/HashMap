@@ -6,6 +6,8 @@ template<typename K, typename V, typename F = KeyHash<K> >
 class HashMap
 {
 public:
+
+    typedef HashNode<K, V> iterator;
     HashMap()
     {
         // construct zero initialized hash table of size
@@ -45,6 +47,37 @@ public:
             entry = entry->GetNext();
         }
         return false;
+    }
+
+    V& operator[](const K &key)
+    {
+        unsigned long hashValue = m_hashFunc(key);
+        HashNode<K, V> *prev = NULL;
+        HashNode<K, V> *entry = m_table[hashValue];
+
+        while (entry != NULL && entry->GetKey() != key)
+        {
+            prev = entry;
+            entry = entry->GetNext();
+        }
+
+        if (entry == NULL)
+        {
+            entry = new HashNode<K, V>();
+            entry->SetKey(key);
+
+            if (prev == NULL)
+            {
+                // insert as first bucket
+                m_table[hashValue] = entry;
+            }
+            else
+            {
+                prev->SetNext(entry);
+            }
+        }
+
+        return entry->GetValue();
     }
 
     void Put(const K &key, const V &value)
