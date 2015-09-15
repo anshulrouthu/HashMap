@@ -2,87 +2,110 @@
 #include "KeyHash.h"
 
 // Hash map class template
-template <typename K, typename V, typename F = KeyHash<K> >
-class HashMap {
+template<typename K, typename V, typename F = KeyHash<K> >
+class HashMap
+{
 public:
-    HashMap() {
+    HashMap()
+    {
         // construct zero initialized hash table of size
-        table = new HashNode<K, V> *[TABLE_SIZE]();
+        m_table = new HashNode<K, V> *[TABLE_SIZE]();
     }
 
-    ~HashMap() {
+    ~HashMap()
+    {
         // destroy all buckets one by one
-        for (int i = 0; i < TABLE_SIZE; ++i) {
-            HashNode<K, V> *entry = table[i];
-            while (entry != NULL) {
+        for (int i = 0; i < TABLE_SIZE; ++i)
+        {
+            HashNode<K, V> *entry = m_table[i];
+            while (entry != NULL)
+            {
                 HashNode<K, V> *prev = entry;
-                entry = entry->getNext();
+                entry = entry->GetNext();
                 delete prev;
             }
-            table[i] = NULL;
+            m_table[i] = NULL;
         }
         // destroy the hash table
-        delete [] table;
+        delete[] m_table;
     }
 
-    bool get(const K &key, V &value) {
-        unsigned long hashValue = hashFunc(key);
-        HashNode<K, V> *entry = table[hashValue];
+    bool Get(const K &key, V &value)
+    {
+        unsigned long hashValue = m_hashFunc(key);
+        HashNode<K, V> *entry = m_table[hashValue];
 
-        while (entry != NULL) {
-            if (entry->getKey() == key) {
-                value = entry->getValue();
+        while (entry != NULL)
+        {
+            if (entry->GetKey() == key)
+            {
+                value = entry->GetValue();
                 return true;
             }
-            entry = entry->getNext();
+            entry = entry->GetNext();
         }
         return false;
     }
 
-    void put(const K &key, const V &value) {
-        unsigned long hashValue = hashFunc(key);
+    void Put(const K &key, const V &value)
+    {
+        unsigned long hashValue = m_hashFunc(key);
         HashNode<K, V> *prev = NULL;
-        HashNode<K, V> *entry = table[hashValue];
+        HashNode<K, V> *entry = m_table[hashValue];
 
-        while (entry != NULL && entry->getKey() != key) {
+        while (entry != NULL && entry->GetKey() != key)
+        {
             prev = entry;
-            entry = entry->getNext();
+            entry = entry->GetNext();
         }
 
-        if (entry == NULL) {
+        if (entry == NULL)
+        {
             entry = new HashNode<K, V>(key, value);
-            if (prev == NULL) {
+            if (prev == NULL)
+            {
                 // insert as first bucket
-                table[hashValue] = entry;
-            } else {
-                prev->setNext(entry);
+                m_table[hashValue] = entry;
             }
-        } else {
+            else
+            {
+                prev->SetNext(entry);
+            }
+        }
+        else
+        {
             // just update the value
-            entry->setValue(value);
+            entry->SetValue(value);
         }
     }
 
-    void remove(const K &key) {
-        unsigned long hashValue = hashFunc(key);
+    void Remove(const K &key)
+    {
+        unsigned long hashValue = m_hashFunc(key);
         HashNode<K, V> *prev = NULL;
-        HashNode<K, V> *entry = table[hashValue];
+        HashNode<K, V> *entry = m_table[hashValue];
 
-        while (entry != NULL && entry->getKey() != key) {
+        while (entry != NULL && entry->GetKey() != key)
+        {
             prev = entry;
-            entry = entry->getNext();
+            entry = entry->GetNext();
         }
 
-        if (entry == NULL) {
+        if (entry == NULL)
+        {
             // key not found
             return;
         }
-        else {
-            if (prev == NULL) {
+        else
+        {
+            if (prev == NULL)
+            {
                 // remove first bucket of the list
-                table[hashValue] = entry->getNext();
-            } else {
-                prev->setNext(entry->getNext());
+                m_table[hashValue] = entry->GetNext();
+            }
+            else
+            {
+                prev->SetNext(entry->GetNext());
             }
             delete entry;
         }
@@ -90,6 +113,6 @@ public:
 
 private:
     // hash table
-    HashNode<K, V> **table;
-    F hashFunc;
+    HashNode<K, V> **m_table;
+    F m_hashFunc;
 };

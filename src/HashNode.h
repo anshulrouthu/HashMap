@@ -1,35 +1,36 @@
 // Hash node class template
+
 template <typename K, typename V>
 class HashNode {
 public:
     HashNode(const K &key, const V &value) :
-    key(key), value(value), next(NULL) {
+    m_key(key), m_value(value), m_next(NULL) {
     }
  
-    K getKey() const {
-        return key;
+    K GetKey() const {
+        return m_key;
     }
  
-    V getValue() const {
-        return value;
+    V GetValue() const {
+        return m_value;
     }
  
-    void setValue(V value) {
-        HashNode::value = value;
+    void SetValue(V value) {
+        m_value = value;
     }
  
-    HashNode *getNext() const {
-        return next;
+    HashNode *GetNext() const {
+        return m_next;
     }
  
-    void setNext(HashNode *next) {
-        HashNode::next = next;
+    void SetNext(HashNode *next) {
+        m_next = next;
     }
  
 private:
     // key-value pair
-    K key;
-    V value;
+    K m_key;
+    V m_value;
     // next bucket with the same key
-    HashNode *next;
+    HashNode *m_next;
 };
